@@ -215,14 +215,14 @@ public class PAR5EEngine extends SwingWorker<Integer,Object> {
                     @Override
                     public boolean accept(File dir, String name) {
                         boolean acc = false;
-
-                        if (name.contains(".png")) {
+                        String lowerName = name.toLowerCase();
+                        if (lowerName.contains(".png")) {
                             acc = true;
                         }
-                        if (name.contains(".jpg")) {
+                        if (lowerName.contains(".jpg")) {
                             acc = true;
                         }
-                        if (name.contains(".jpeg")) {
+                        if (lowerName.contains(".jpeg")) {
                             acc = true;
                         }
 
@@ -435,12 +435,14 @@ public class PAR5EEngine extends SwingWorker<Integer,Object> {
                         for (File file : files) {
                             if (file.isFile()) {
                                 if (sourceData != null) {
-                                    if (file.getName().contains(".png") || file.getName().contains(".jpg")) {
+                                    String lName = file.getName().toLowerCase();
+                                    if (lName.contains(".png") || lName.contains(".jpg")) {
                                         sourceData = Arrays.copyOf(sourceData, sourceData.length+1); 
                                         sourceData[sourceData.length-1] = file.getPath();
                                     }
                                 } else {
-                                    if (file.getName().contains(".png") || file.getName().contains(".jpg")) {
+                                    String lName = file.getName().toLowerCase();
+                                    if (lName.contains(".png") || lName.contains(".jpg")) {
                                         sourceData = new String[1];
                                         sourceData[0] = file.getPath();
                                     }

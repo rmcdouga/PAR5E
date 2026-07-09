@@ -7,8 +7,10 @@
 package par5e.utils;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeJava;
 
 /**
@@ -24,29 +26,25 @@ public class SourceFile {
     }
     
     public String[] readFile() throws IOException {
-        FileReader fReader = new FileReader(path);
         String[] textData;
-            try (BufferedReader textReader = new BufferedReader(fReader)) {
+            try (BufferedReader textReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)) {
                 int numberOfLines = getLineCount();
                 textData = new String[numberOfLines];
                 for (int i=0; i < numberOfLines; i++) {
                     textData[i] = cleanTxt(textReader.readLine());    
                 }   
-                textReader.close();
             }
         return textData;
     }
     
     public int getLineCount() throws IOException {
-        FileReader fReader = new FileReader(path);
-        try (BufferedReader textReader = new BufferedReader(fReader)) {
+        try (BufferedReader textReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)) {
             String aLine;
             int numLines = 0;
             
             while (( aLine = textReader.readLine()) != null) {
                 numLines++;
             }
-            textReader.close();
             return numLines;
         }
     }

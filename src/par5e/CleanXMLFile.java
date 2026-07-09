@@ -10,8 +10,9 @@ import par5e.utils.RegEx;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,19 +33,12 @@ public class CleanXMLFile {
     }
     
     public void openFile() {
-        FileReader fReader = null;     
-        try {
-            fReader = new FileReader(path);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CleanXMLFile.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try (BufferedReader textReader = new BufferedReader(fReader)) {
+        try (BufferedReader textReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)) {
             lineCount = getLineCount();
             textData = new String[lineCount];
             for (int i=0; i < lineCount; i++) {
                 textData[i] = textReader.readLine();    
             }   
-            textReader.close();
         } catch (IOException ex) {
             Logger.getLogger(CleanXMLFile.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -96,32 +90,23 @@ public class CleanXMLFile {
     }
     
     public void closeFile() {
-        FileWriter fWriter = null;     
-        try {
-            fWriter = new FileWriter(path);
-        } catch (IOException ex) {
-            Logger.getLogger(CleanXMLFile.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try (BufferedWriter textWriter = new BufferedWriter(fWriter)) {
+        try (BufferedWriter textWriter = Files.newBufferedWriter(Paths.get(path), StandardCharsets.UTF_8)) {
             for (int i=0; i < lineCount; i++) {
                 textWriter.write(textData[i] + "\n");
             }
-            textWriter.close();
         } catch (IOException ex) {
             Logger.getLogger(CleanXMLFile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }  
     
     public int getLineCount() throws IOException {
-        FileReader fReader = new FileReader(path);
-        try (BufferedReader textReader = new BufferedReader(fReader)) {
+        try (BufferedReader textReader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8)) {
             String aLine;
             int numLines = 0;
             
             while (( aLine = textReader.readLine()) != null) {
                 numLines++;
             }
-            textReader.close();
             return numLines;
         }
     }
