@@ -8,8 +8,8 @@
 
 package par5e;
 
-import com.apple.eawt.AboutHandler;
-import com.apple.eawt.AppEvent;
+import java.awt.Desktop;
+import java.awt.Taskbar;
 import par5e.utils.OSValidator;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -156,19 +156,23 @@ public final class PAR5E extends javax.swing.JFrame {
         //Set Icon for App
         setIconImage(new ImageIcon(getClass().getResource("resources/icons/PAR5E256.png")).getImage());
         
-        if (os.isMac()) {
-            com.apple.eawt.Application app = com.apple.eawt.Application.getApplication();
-            app.setDockIconImage(new ImageIcon(getClass().getResource("resources/icons/PAR5E512.png")).getImage());
-            app.setAboutHandler(new AboutHandler() {
-                @Override
-                public void handleAbout(AppEvent.AboutEvent ae) {
-                    AboutDialog aDialog = new AboutDialog(null, true);
-                    aDialog.setText(packageBuild.getProperty("build").toString());
-                    
-                    aDialog.setVisible(true);   
+        // Use the standard Desktop API so this compiles on modern JDKs.
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (Taskbar.isTaskbarSupported()) {
+                    Taskbar.getTaskbar().setIconImage(new ImageIcon(getClass().getResource("resources/icons/PAR5E512.png")).getImage());
                 }
-            });
-        } 
+                desktop.setAboutHandler(ae->{
+                        AboutDialog aDialog = new AboutDialog(null, true);
+                        aDialog.setText(packageBuild.getProperty("build").toString());
+
+                        aDialog.setVisible(true);
+                    });
+            }
+        } catch (UnsupportedOperationException ex) {
+            Logger.getLogger(PAR5E.class.getName()).log(Level.FINE, "Desktop integration not available", ex);
+        }
         
         //Check for config file in program arguements and if present load and start parse action.
         if (aArgs.length > 0 ) {
